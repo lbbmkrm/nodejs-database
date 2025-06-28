@@ -1,7 +1,7 @@
 import { prisma } from "../src/prisma-client";
 
 async function insertDatabase() {
-  await prisma.users.createMany({
+  await prisma.user.createMany({
     data: [
       { email: "johndoe@example.com", name: "John Doe" },
       { email: "janedoe@example.com", name: "Jane Doe" },
@@ -12,16 +12,16 @@ async function insertDatabase() {
 
 describe("prisma client", () => {
   beforeEach(async () => {
-    await prisma.users.deleteMany();
+    await prisma.user.deleteMany();
   });
 
   it("should be able to create data", async () => {
     /**
-     * prisma.users.create
+     * prisma.user.create
      * Membuat satu record user baru.
      * Return: Promise<User> — objek user lengkap.
      */
-    const user = await prisma.users.create({
+    const user = await prisma.user.create({
       data: {
         name: "John Doe",
         email: "johndoe@example.com",
@@ -33,11 +33,11 @@ describe("prisma client", () => {
     expect(user.email).toBe("johndoe@example.com");
 
     /**
-     * prisma.users.createMany
+     * prisma.user.createMany
      * Membuat banyak record user sekaligus.
      * Return: Promise<{ count: number }> — jumlah record berhasil dibuat.
      */
-    const users = await prisma.users.createMany({
+    const users = await prisma.user.createMany({
       data: [
         { name: "Jane Doe", email: "janedoe@example.com" },
         { name: "Foo Bar", email: "foobar@example.com" },
@@ -55,7 +55,7 @@ describe("prisma client", () => {
      * findUnique — mencari user berdasarkan kolom unik (email).
      * Return: object record table / null
      */
-    const uniqueData = await prisma.users.findUnique({
+    const uniqueData = await prisma.user.findUnique({
       where: { email: "janedoe@example.com" },
     });
 
@@ -69,7 +69,7 @@ describe("prisma client", () => {
      * findFirst — ambil user pertama yang cocok dengan filter tertentu.
      * return object record table / null
      */
-    const first = await prisma.users.findFirst({
+    const first = await prisma.user.findFirst({
       where: { name: "Jane Doe" },
     });
 
@@ -82,21 +82,21 @@ describe("prisma client", () => {
      * findMany — ambil semua user (tanpa filter).
      * Return: array of User
      */
-    const findMany = await prisma.users.findMany();
+    const findMany = await prisma.user.findMany();
     expect(findMany.length).toBeGreaterThanOrEqual(3);
 
     /**
      * count — menghitung jumlah total record user.
      * Return: number
      */
-    const countRecord = await prisma.users.count();
+    const countRecord = await prisma.user.count();
     expect(countRecord).toBe(3);
   });
 
   it("should be able to update data", async () => {
     await insertDatabase();
 
-    const johndoe = await prisma.users.findUnique({
+    const johndoe = await prisma.user.findUnique({
       where: { email: "johndoe@example.com" },
     });
 
@@ -104,7 +104,7 @@ describe("prisma client", () => {
      * update — mengubah data user berdasarkan ID.
      * Return: User yang sudah diperbarui.
      */
-    const updatedData = await prisma.users.update({
+    const updatedData = await prisma.user.update({
       where: { id: johndoe.id },
       data: {
         name: "updated name",
@@ -121,7 +121,7 @@ describe("prisma client", () => {
      * updateMany — mengubah banyak record sekaligus.
      * Return: { count: number }
      */
-    const updateMany = await prisma.users.updateMany({
+    const updateMany = await prisma.user.updateMany({
       data: {
         phone: "08999999999",
       },
@@ -133,7 +133,7 @@ describe("prisma client", () => {
      * upsert — jika user ditemukan berdasarkan email, update.
      * Jika tidak ditemukan, maka create.
      */
-    const upsert = await prisma.users.upsert({
+    const upsert = await prisma.user.upsert({
       where: { email: "janesmith@example.com" },
       update: {
         name: "jane smith updated",
@@ -153,7 +153,7 @@ describe("prisma client", () => {
   it("should be able to delete data", async () => {
     await insertDatabase();
 
-    const johndoe = await prisma.users.findUnique({
+    const johndoe = await prisma.user.findUnique({
       where: { email: "johndoe@example.com" },
     });
 
@@ -163,7 +163,7 @@ describe("prisma client", () => {
      * delete — menghapus satu user berdasarkan ID.
      * Return: user yang dihapus.
      */
-    const deleted = await prisma.users.delete({
+    const deleted = await prisma.user.delete({
       where: { id: johndoe.id },
     });
 
@@ -172,7 +172,7 @@ describe("prisma client", () => {
       name: "John Doe",
     });
 
-    const shouldBeNull = await prisma.users.findUnique({
+    const shouldBeNull = await prisma.user.findUnique({
       where: { id: johndoe.id },
     });
 
@@ -182,8 +182,8 @@ describe("prisma client", () => {
      * deleteMany — menghapus semua user.
      * findMany harus mengembalikan array kosong [].
      */
-    await prisma.users.deleteMany();
-    const getAll = await prisma.users.findMany();
+    await prisma.user.deleteMany();
+    const getAll = await prisma.user.findMany();
     expect(getAll.length).toBe(0);
   });
   /**
